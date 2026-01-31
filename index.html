@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Wordsmiths Arena | Scrabble Retreat</title>
+    <meta name="description" content="Join the elite Scrabble retreat in Lagos. A premium 10-round tournament with verifiable rating systems, cash prizes, and a world-class experience. Register now." />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --cream: #FFFDF5;
+        --burnt-orange: #CC5500;
+        --deep-burnt: #5C2A11;
+        --soft-orange: #F5E6D3;
+        --mahogany: #3D1C0B;
+      }
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--cream);
+        color: var(--deep-burnt);
+        margin: 0;
+        overflow-x: hidden;
+        scroll-behavior: smooth;
+      }
+      .font-display {
+        font-family: 'Lilita One', cursive;
+      }
+      .hero-gradient {
+        background: radial-gradient(circle at center, #FFFDF5 0%, #F5E6D3 40%, #CC5500 120%);
+      }
+      .landscape-mask {
+        mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+      }
+      .btn-orange {
+        background: #CC5500;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      .btn-orange:hover {
+        background: #B34B00;
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: 0 20px 25px -5px rgba(204, 85, 0, 0.3);
+      }
+      
+      /* Specialty Textures */
+      .wood-grain {
+        background-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png');
+        background-color: #F5E6D3;
+      }
+      .mahogany-panel {
+        background-color: var(--mahogany);
+        background-image: url('https://www.transparenttextures.com/patterns/dark-wood.png');
+        box-shadow: inset 0 0 100px rgba(0,0,0,0.5);
+      }
+      .linen-texture {
+        background-image: url('https://www.transparenttextures.com/patterns/linen.png');
+      }
+      
+      /* Premium Accents */
+      .gold-shimmer {
+        background: linear-gradient(135deg, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+      }
+      
+      .velvet-glow-red {
+        box-shadow: 0 0 30px rgba(153, 0, 0, 0.2), inset 0 0 20px rgba(0,0,0,0.3);
+        background: radial-gradient(circle at top left, #8B0000, #4A0000);
+      }
+
+      /* Animations */
+      @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+      }
+      @keyframes shine {
+        0% { transform: translateX(-100%) skewX(-15deg); }
+        100% { transform: translateX(200%) skewX(-15deg); }
+      }
+      @keyframes revealUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .animate-float {
+        animation: float 6s ease-in-out infinite;
+      }
+      .animate-reveal {
+        animation: revealUp 0.8s ease-out forwards;
+      }
+      .delay-100 { animation-delay: 100ms; }
+      .delay-200 { animation-delay: 200ms; }
+      .delay-300 { animation-delay: 300ms; }
+      .delay-400 { animation-delay: 400ms; }
+      .delay-500 { animation-delay: 500ms; }
+
+      .nav-dot {
+        width: 12px;
+        height: 3px;
+        background: rgba(92, 42, 17, 0.1);
+        border-radius: 2px;
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      .nav-dot.active {
+        background: #CC5500;
+        width: 32px;
+        height: 4px;
+      }
+      
+      .illustrative-card {
+        background: rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(204, 85, 0, 0.1);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        overflow: hidden;
+      }
+      .illustrative-card:hover {
+        background: white;
+        transform: translateY(-8px);
+        border-color: rgba(204, 85, 0, 0.3);
+        box-shadow: 0 20px 40px -10px rgba(92, 42, 17, 0.1);
+      }
+      .illustrative-card::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 50%;
+        height: 100%;
+        background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent);
+        transform: translateX(-100%) skewX(-15deg);
+        pointer-events: none;
+      }
+      .illustrative-card:hover::after {
+        animation: shine 0.8s forwards;
+      }
+    </style>
+    <script type="importmap">
+    {
+      "imports": {
+        "react": "https://esm.sh/react@^19.2.4",
+        "react/": "https://esm.sh/react@^19.2.4/",
+        "react-dom": "https://esm.sh/react-dom@^19.2.4",
+        "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+        "lucide-react": "https://esm.sh/lucide-react@^0.563.0"
+      }
+    }
+    </script>
+  <link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
