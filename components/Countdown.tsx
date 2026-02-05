@@ -22,7 +22,7 @@ const Countdown: React.FC = () => {
           seconds: Math.floor((difference / 1000) % 60)
         });
       } else {
-        // Stop timer at 0
+        // Event has started or passed
         setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
       }
     };
@@ -41,6 +41,20 @@ const Countdown: React.FC = () => {
       <span className="text-[10px] uppercase tracking-widest text-[#5C2A11]/50 font-bold">{label}</span>
     </div>
   );
+
+  // Check if event has started/passed
+  const eventHasPassed = +EVENT_DATE - +new Date() <= 0;
+
+  if (eventHasPassed) {
+    return (
+      <div className="text-center py-6">
+        <div className="inline-flex items-center gap-3 bg-[#CC5500]/10 px-6 py-3 rounded-full border border-[#CC5500]/20">
+          <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+          <span className="font-display text-xl text-[#5C2A11] uppercase tracking-wider">Event In Progress</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex justify-center items-center gap-4 md:gap-12 py-6">

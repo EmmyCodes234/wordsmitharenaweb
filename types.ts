@@ -13,3 +13,17 @@ export interface PrizeCategory {
   count: number;
   description: string;
 }
+
+export interface RegisteredPlayer {
+  id: number;
+  name: string;
+  category?: string;
+  seed?: number;
+}
+
+export interface RegisteredPlayer {
+  id: number;
+  name: string;
+  category?: string;
+  seed?: number;
+}
