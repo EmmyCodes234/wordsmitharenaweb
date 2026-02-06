@@ -62,7 +62,7 @@ const RegistrationModal = ({
             </div>
             <h3 className="font-display text-2xl uppercase text-[#5C2A11]">Registration is Now Closed</h3>
             <p className="text-[#5C2A11]/70 max-w-md mx-auto leading-relaxed">
-              Thank you for your interest in The Wordsmiths Arena Open Scrabble Retreat. 
+              Thank you for your interest in The Wordsmiths Arena Open Scrabble Retreat.
               Registration has now closed and we are no longer accepting new entries.
             </p>
             <div className="bg-[#F5E6D3]/50 p-6 rounded-2xl border border-[#CC5500]/10 max-w-sm mx-auto">
@@ -460,13 +460,15 @@ const App: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-3">
-          <button
-            onClick={() => alert('Registration has closed. Thank you for your interest!')}
-            className="bg-gray-400 flex items-center gap-2 text-white/80 text-[10px] md:text-xs font-bold px-4 md:px-6 py-2 md:py-2.5 rounded-lg cursor-not-allowed"
+          <a
+            href="https://direktorpro.xyz/public/thewordsmithsarenajanuary26"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-[#CC5500] flex items-center gap-2 text-white text-[10px] md:text-xs font-bold px-4 md:px-6 py-2 md:py-2.5 rounded-lg hover:bg-[#B34B00] transition-colors"
           >
-            Registration Closed
-            <Lock className="w-3 h-3 md:w-4 md:h-4" />
-          </button>
+            Tournament Link
+            <ExternalLink className="w-3 h-3 md:w-4 md:h-4" />
+          </a>
         </div>
       </nav>
 
@@ -511,12 +513,24 @@ const App: React.FC = () => {
               </RevealOnScroll>
 
               <RevealOnScroll delay={400}>
-                <button
-                  onClick={() => alert('Registration has closed. Thank you for your interest!')}
-                  className="bg-gray-400 text-white/80 font-display text-2xl md:text-3xl lg:text-4xl px-10 md:px-12 lg:px-14 py-6 md:py-8 rounded-3xl shadow-2xl mb-12 uppercase tracking-widest cursor-not-allowed"
-                >
-                  Registration Closed
-                </button>
+                <div className="flex flex-col items-center gap-6 mb-12 w-full px-4">
+                  <a
+                    href="https://direktorpro.xyz/public/thewordsmithsarenajanuary26"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-[#CC5500] text-white font-display text-2xl md:text-3xl lg:text-4xl px-10 md:px-12 lg:px-14 py-6 md:py-8 rounded-3xl shadow-2xl uppercase tracking-widest hover:bg-[#B34B00] transition-all hover:scale-105 text-center"
+                  >
+                    Tournament Link
+                  </a>
+                  <a
+                    href="https://direktorpro.xyz/public/thewordsmithsarenajanuary26/submit"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-white text-[#CC5500] border-2 border-[#CC5500] font-display text-lg md:text-xl lg:text-2xl px-8 md:px-10 py-4 md:py-5 rounded-3xl shadow-xl uppercase tracking-widest hover:bg-[#F5E6D3] transition-all hover:scale-105 text-center"
+                  >
+                    Results Submission Link
+                  </a>
+                </div>
               </RevealOnScroll>
 
               <RevealOnScroll delay={500}>
@@ -687,12 +701,24 @@ const App: React.FC = () => {
                       Don't stay on the sidelines. The tiles are set, the clocks are waiting, and the arena belongs to those who dare to play.
                     </p>
 
-                    <button
-                      onClick={() => alert('Registration has closed. Thank you for your interest!')}
-                      className="bg-gray-300 text-gray-500 font-display text-2xl md:text-3xl lg:text-3xl px-12 md:px-20 py-6 md:py-8 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] cursor-not-allowed uppercase"
-                    >
-                      Registration Closed
-                    </button>
+                    <div className="flex flex-col items-center gap-6 w-full px-4">
+                      <a
+                        href="https://direktorpro.xyz/public/thewordsmithsarenajanuary26"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-white text-[#CC5500] font-display text-2xl md:text-3xl lg:text-3xl px-12 md:px-20 py-6 md:py-8 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] uppercase hover:scale-105 transition-transform text-center"
+                      >
+                        Tournament Link
+                      </a>
+                      <a
+                        href="https://direktorpro.xyz/public/thewordsmithsarenajanuary26/submit"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-transparent border-2 border-white text-white font-display text-xl md:text-2xl lg:text-2xl px-10 md:px-16 py-4 md:py-6 rounded-[2.5rem] shadow-lg uppercase hover:bg-white/10 transition-all hover:scale-105 text-center"
+                      >
+                        Results Submission Link
+                      </a>
+                    </div>
                   </div>
                 </RevealOnScroll>
 

@@ -20,11 +20,13 @@ const REGISTERED_PLAYERS: RegisteredPlayer[] = [
   { id: 15, name: "Ezinna Lovejoy", category: "Opens", seed: 15 },
   { id: 16, name: "Benjamin Akpotu", category: "Intermediate", seed: 16 },
   { id: 17, name: "Anthony Odok", category: "Masters", seed: 17 },
-  { id: 18, name: "Cyril Umebiye", category: "Masters", seed: 18 },
+  { id: 18, name: "Olaribigbe Hakeem", category: "Masters", seed: 18 },
   { id: 19, name: "Tunde Saporu", category: "Masters", seed: 19 },
   { id: 20, name: "Ibukun Agbelekale", category: "Opens", seed: 20 },
   { id: 21, name: "Effiong Bassey", category: "Intermediate", seed: 21 },
-  { id: 22, name: "Sunday Ituah", category: "Intermediate", seed: 22 }
+  { id: 22, name: "Sunday Ituah", category: "Intermediate", seed: 22 },
+  { id: 23, name: "Emmanuel Egbele", category: "Intermediate", seed: 23 },
+  { id: 24, name: "Idomele Emeka", category: "Opens", seed: 24 }
 ];
 
 const RegisteredPlayers: React.FC<{ onBack: () => void }> = ({ onBack }) => {
