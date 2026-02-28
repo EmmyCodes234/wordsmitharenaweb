@@ -3,7 +3,7 @@ import React from 'react';
 import { Users, RotateCcw, BookOpen, Clock, ShieldCheck, Trophy, Medal, Star } from 'lucide-react';
 import { TournamentDetail, PrizeCategory } from './types';
 
-export const EVENT_DATE = new Date('2026-02-07T09:00:00+01:00');
+export const EVENT_DATE = new Date('2026-03-07T09:00:00+01:00');
 
 export const TOURNAMENT_DETAILS: TournamentDetail[] = [
   {

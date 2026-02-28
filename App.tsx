@@ -3,14 +3,18 @@ import {
   MapPin, Clock, Calendar, Trophy, Info,
   ExternalLink, Mail, Phone, Star, Medal,
   Shield, Book, Zap, ChevronDown, X, ChevronRight, ChevronLeft, Check, Lock, User, Trash2, Search, ArrowLeft,
-  Settings, UserCheck, Layers, FileText,
+  Settings, UserCheck, Menu, FileText,
   Target,
   ArrowRight,
   Copy
 } from 'lucide-react';
+import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
 import Countdown from './components/Countdown';
 import ScrabbleTile from './components/ScrabbleTile';
 import RegisteredPlayers from './components/RegisteredPlayers';
+import { Home } from './components/Home';
+import { PaymentModal } from './components/PaymentModal';
+import { RegistrationModal } from './components/RegistrationModal';
 import { TOURNAMENT_DETAILS, PRIZE_CATEGORIES } from './constants';
 import { supabase } from './supabase';
 import RevealOnScroll from './components/RevealOnScroll';
@@ -27,65 +31,6 @@ interface Player {
   registeredAt: string;
 }
 
-// --- Registration Modal ---
-const RegistrationModal = ({
-  isOpen,
-  onClose
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-}) => {
-
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-[#1A0D05]/95 backdrop-blur-md" onClick={onClose} />
-      <div className="relative w-full max-w-xl bg-[#FFFDF5] rounded-[2.5rem] overflow-hidden shadow-2xl border border-[#CC5500]/20 flex flex-col max-h-[90vh] animate-reveal">
-        {/* Header */}
-        <div className="p-8 border-b border-[#CC5500]/10 flex justify-between items-center bg-[#F5E6D3]/30">
-          <div>
-            <h2 className="font-display text-3xl text-[#5C2A11] uppercase leading-none">Registration Closed</h2>
-          </div>
-          <button onClick={onClose} className="p-2 hover:bg-[#CC5500]/10 rounded-full transition-colors">
-            <X className="w-6 h-6 text-[#5C2A11]" />
-          </button>
-        </div>
-
-
-
-        {/* Content */}
-        <div className="p-8 overflow-y-auto">
-          <div className="text-center space-y-6 py-12">
-            <div className="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Lock size={40} className="text-gray-500" />
-            </div>
-            <h3 className="font-display text-2xl uppercase text-[#5C2A11]">Registration is Now Closed</h3>
-            <p className="text-[#5C2A11]/70 max-w-md mx-auto leading-relaxed">
-              Thank you for your interest in The Wordsmiths Arena Open Scrabble Retreat.
-              Registration has now closed and we are no longer accepting new entries.
-            </p>
-            <div className="bg-[#F5E6D3]/50 p-6 rounded-2xl border border-[#CC5500]/10 max-w-sm mx-auto">
-              <p className="text-sm text-[#5C2A11]/60">
-                <span className="font-bold text-[#CC5500]">Event Status:</span> In Progress
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Footer Actions */}
-        <div className="p-8 bg-[#F5E6D3]/20 flex justify-center">
-          <button
-            onClick={onClose}
-            className="px-8 py-4 bg-[#CC5500] text-white font-bold uppercase tracking-widest text-xs rounded-xl hover:bg-[#B34B00] transition-all"
-          >
-            Close
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 // --- Admin Panel Component ---
 const AdminPanel = ({
@@ -230,89 +175,213 @@ const AdminPanel = ({
   );
 };
 
-// --- Players View (Dedicated Page) ---
-const PlayersView = ({ players, onBack }: { players: Player[]; onBack: () => void }) => {
-  const [searchTerm, setSearchTerm] = useState('');
+// --- Menu Overlay ---
+const MenuOverlay = ({
+  isOpen,
+  onClose,
+  onRegister
+}: { isOpen: boolean; onClose: () => void; onRegister: (e: React.MouseEvent) => void }) => {
+  const [activeTab, setActiveTab] = useState('/');
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const filteredPlayers = players.filter(p =>
-    p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.category.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  useEffect(() => {
+    setActiveTab(location.pathname);
+  }, [location]);
+
+  if (!isOpen) return null;
+
+  const menuItems = [
+    { id: '/', label: 'Home' },
+    { id: '/tournaments', label: 'Tournaments' },
+    { id: '/gallery', label: 'Gallery' },
+    { id: '/registered-players', label: 'Player List' },
+  ];
 
   return (
-    <div className="min-h-screen bg-[#FFFDF5] pt-24 pb-40 px-4 md:px-8 animate-reveal overflow-x-hidden">
-      <div className="max-w-4xl mx-auto">
-        <button
-          onClick={onBack}
-          className="flex items-center gap-2 text-[#CC5500] font-bold uppercase tracking-widest text-xs mb-8 hover:translate-x-[-4px] transition-transform"
-        >
-          <ArrowLeft size={16} /> Back to Arena
+    <div className="fixed inset-0 z-[200] bg-white animate-reveal overflow-y-auto flex flex-col">
+      {/* Header */}
+      <div className="flex justify-between items-center px-6 md:px-12 py-8">
+        <button onClick={onClose} className="flex items-center gap-4 group hover:opacity-70 transition-opacity">
+          <X size={32} className="text-black group-hover:rotate-90 transition-transform duration-500" strokeWidth={1.5} />
+          <span className="font-medium text-black text-xl">Close</span>
         </button>
-
-        <div className="flex flex-col gap-6 mb-12">
-          <div>
-            <h1 className="font-display text-4xl md:text-7xl text-[#5C2A11] uppercase leading-none mb-2">Arena Roster</h1>
-            <p className="text-[#CC5500] font-black uppercase tracking-[0.4em] text-[10px]">Official Entry List • Feb 2026</p>
-          </div>
-
-          <div className="relative w-full group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#5C2A11]/30 group-focus-within:text-[#CC5500] transition-colors" size={18} />
-            <input
-              type="text"
-              placeholder="Filter names or categories..."
-              className="w-full bg-white border-2 border-[#5C2A11]/5 rounded-2xl px-12 py-3.5 outline-none focus:border-[#CC5500] transition-all font-semibold text-sm"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
+        
+        {/* Center Logo Mark (Abstract X) -> now Wordsmith Logo */}
+        <div className="absolute left-1/2 -translate-x-1/2 cursor-pointer" onClick={() => { navigate('/'); onClose(); }}>
+          <img src="/wordsmithslogo.png" alt="Wordsmiths Arena Logo" className="h-16 md:h-20 lg:h-24 object-contain" />
         </div>
 
-        <div className="bg-[#F5E6D3]/30 rounded-[2rem] border border-[#CC5500]/10 overflow-hidden shadow-sm">
-          <div className="flex flex-col divide-y divide-[#CC5500]/5">
-            {filteredPlayers.map((player, index) => (
-              <div
-                key={player.id}
-                className="p-5 flex items-center justify-between gap-4 hover:bg-white transition-all group animate-reveal"
-                style={{ animationDelay: `${index * 50}ms` }}
-              >
-                <div className="flex items-center gap-4 min-w-0">
-                  <div className="flex-shrink-0 w-12 h-12 bg-[#CC5500]/10 rounded-xl flex items-center justify-center font-display text-xl text-[#CC5500] border border-[#CC5500]/10 group-hover:bg-[#CC5500] group-hover:text-white transition-all transform group-hover:rotate-6">
-                    {player.name[0]}
-                  </div>
-                  <div className="min-w-0">
-                    <h3 className="font-bold text-[#5C2A11] text-sm md:text-base leading-tight truncate">{player.name}</h3>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <p className="text-[9px] font-black uppercase tracking-widest text-[#5C2A11]/40 truncate">{player.category}</p>
-                      <span className="w-1 h-1 rounded-full bg-[#5C2A11]/10" />
-                      <p className="text-[9px] font-bold text-[#5C2A11]/30 uppercase">{player.registeredAt.split(',')[0]}</p>
-                    </div>
-                  </div>
-                </div>
+        <div className="flex items-center gap-6">
+           <button onClick={(e) => { onClose(); onRegister(e); }} className="bg-noovo-yellow text-black font-medium rounded-full px-6 py-2.5 sm:px-8 sm:py-3 text-sm hover:scale-105 transition-transform">
+             Register Now
+           </button>
+           <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-black/10 overflow-hidden cursor-pointer hover:border-black/30 transition-colors">
+             <img src="/IMG-20260228-WA0010.jpg" className="w-full h-full object-cover"/>
+           </div>
+        </div>
+      </div>
 
-                <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
-                  <span className={`px-2.5 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border transition-all ${player.status === 'confirmed'
-                    ? 'bg-green-500/5 text-green-600 border-green-500/10 group-hover:bg-green-500 group-hover:text-white'
-                    : 'bg-yellow-500/5 text-yellow-600 border-yellow-500/10 group-hover:bg-yellow-500 group-hover:text-white'
-                    }`}>
-                    {player.status}
-                  </span>
-                </div>
+      {/* Body */}
+      <div className="flex-1 flex flex-col lg:flex-row p-6 md:p-12 gap-12 lg:gap-24 max-w-[1600px] mx-auto w-full">
+        {/* Sidebar Navigation */}
+        <div className="w-full lg:w-80 flex flex-col gap-1 mt-4">
+           {menuItems.map(item => (
+             <button 
+               key={item.id}
+               onMouseEnter={() => setActiveTab(item.id)}
+               onClick={() => { navigate(item.id); onClose(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} 
+               className={`text-left text-2xl md:text-3xl tracking-tight font-light py-4 px-8 rounded-[2rem] transition-colors ${
+                 (activeTab === item.id) ? 'bg-black text-white font-normal' : 'text-black/70 hover:text-black hover:bg-black/5'
+               }`}
+             >
+               {item.label}
+             </button>
+           ))}
+        </div>
+
+        {/* Dynamic Content Area based on screenshot */}
+        <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6 h-full pb-12">
+            {/* Left large card */}
+            <div className="relative rounded-[2.5rem] overflow-hidden group row-span-2 hidden md:block">
+              <img src="/IMG-20260228-WA0011.jpg" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"/>
+              <div className="absolute inset-0 bg-black/40 p-12 flex flex-col justify-center items-center text-center">
+                 <h2 className="text-white text-4xl lg:text-5xl font-medium mb-6">Inside the Arena</h2>
+                 <p className="text-white/80 text-lg mb-10">Where Scrabble Meets Excellence</p>
+                 <button onClick={() => { navigate('/'); onClose(); }} className="bg-noovo-yellow text-black font-medium py-3 px-10 rounded-full hover:scale-105 transition-transform shadow-lg">Discover</button>
               </div>
-            ))}
-          </div>
+            </div>
+
+            {/* Top Right card */}
+            <div className="relative rounded-[2.5rem] overflow-hidden group min-h-[250px] shadow-sm">
+              <img src="/IMG-20260228-WA0012.jpg" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"/>
+              <div className="absolute inset-0 bg-black/40 p-8 flex flex-col justify-center items-center text-center">
+                 <h2 className="text-white text-3xl font-medium mb-4">Tournaments</h2>
+                 <p className="text-white/80 text-base mb-8">Upcoming matches & ratings</p>
+                 <button onClick={() => { navigate('/tournaments'); onClose(); }} className="bg-noovo-yellow text-black font-medium py-3 px-8 text-sm rounded-full hover:scale-105 transition-transform shadow-lg">Plan your visit</button>
+              </div>
+            </div>
+
+            {/* Bottom Right card */}
+            <div className="relative rounded-[2.5rem] overflow-hidden group min-h-[250px] shadow-sm">
+              <img src="/IMG-20260228-WA0013.jpg" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"/>
+              <div className="absolute inset-0 bg-black/40 p-8 flex flex-col justify-center items-center text-center">
+                 <h2 className="text-white text-3xl font-medium mb-4">Gallery</h2>
+                 <p className="text-white/80 text-base mb-8">Experience the action.</p>
+                 <button onClick={() => { navigate('/gallery'); onClose(); }} className="bg-noovo-yellow text-black font-medium py-3 px-8 text-sm rounded-full hover:scale-105 transition-transform shadow-lg">View Gallery</button>
+              </div>
+            </div>
         </div>
       </div>
     </div>
   );
-}
+};
+const GalleryView = () => {
+  const images = [
+    "/IMG-20260228-WA0014.jpg",
+    "/IMG-20260228-WA0015.jpg",
+    "/IMG-20260228-WA0016.jpg",
+    "/IMG-20260228-WA0024.jpg",
+    "/IMG-20260207-WA0029.jpg",
+    "/IMG-20260207-WA0036.jpg",
+    "/1001876893.jpg",
+    "/1001876894.jpg",
+    "/1001876956.jpg"
+  ];
+  return (
+    <div className="min-h-screen bg-white pt-32 pb-40 px-6 md:px-12 animate-reveal">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-20">
+          <h1 className="text-4xl md:text-7xl text-black font-medium tracking-tight mb-4">The Gallery</h1>
+          <p className="text-black/50 text-base font-light">Memories from the Arena</p>
+        </div>
+        <div className="columns-1 md:columns-2 gap-6 space-y-6">
+          {images.map((src, idx) => (
+            <div key={idx} className="break-inside-avoid overflow-hidden rounded-[2rem] shadow-sm group cursor-pointer relative border border-black/5">
+              <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none"></div>
+              <img src={src} alt="Gallery Event" className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-700" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// --- Tourneys View ---
+const TourneysView: React.FC<{ onRegister: (e: React.MouseEvent) => void }> = ({ onRegister }) => {
+  const tourneys = [
+    {
+      id: 1,
+      title: "Second Edition",
+      date: "March 7, 2026",
+      status: "Upcoming",
+      link: "https://direktorpro.xyz/public/thewordsmithsarenajanuary26",
+      img: "/wordsmithsmarch26.jpg"
+    },
+    {
+      id: 2,
+      title: "First Edition",
+      date: "February 2026",
+      status: "Completed",
+      link: "https://direktorpro.xyz/public/thewordsmithsarenajanuary26",
+      img: "/IMG-20260228-WA0018.jpg"
+    }
+  ];
+
+  return (
+    <div className="min-h-screen bg-white pt-32 pb-40 px-6 md:px-12 animate-reveal">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-20">
+          <h1 className="text-4xl md:text-7xl text-black font-medium tracking-tight mb-4">Tournaments</h1>
+          <p className="text-black/50 text-base font-light">Past & Upcoming Battles</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {tourneys.map(t => (
+            <a key={t.id} href={t.status === 'Upcoming' ? "#" : t.link} onClick={t.status === 'Upcoming' ? onRegister : undefined} target={t.status === 'Upcoming' ? undefined : "_blank"} rel={t.status === 'Upcoming' ? undefined : "noopener noreferrer"} className="group block h-full">
+              <div className="bg-white rounded-[2rem] p-6 border border-black/5 hover:border-black/20 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 h-full flex flex-col">
+                <div className="w-full h-64 rounded-[1.5rem] overflow-hidden mb-8 relative">
+                  <div className={`absolute top-4 right-4 z-10 px-4 py-2 rounded-full font-medium text-xs ${t.status === 'Upcoming' ? 'bg-noovo-yellow text-black' : 'bg-black/50 text-white backdrop-blur-md'}`}>
+                    {t.status}
+                  </div>
+                  <img src={t.img} alt={t.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                </div>
+                <div className="px-4 pb-4 flex-1 flex flex-col">
+                  <h3 className="text-2xl md:text-3xl font-medium text-black mb-2 group-hover:text-black/70 transition-colors">{t.title}</h3>
+                  <p className="text-black/50 font-light text-sm mb-6 flex items-center gap-2">
+                    <Calendar size={16} />
+                    {t.date}
+                  </p>
+                  <div className="mt-auto flex items-center text-black font-medium text-sm group-hover:underline transition-all">
+                    {t.status === 'Upcoming' ? 'Register Now' : 'View Details'} <ArrowRight size={16} className="ml-2" />
+                  </div>
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 // --- Main App Component ---
 const App: React.FC = () => {
-  const [view, setView] = useState<'landing' | 'registered-players'>('landing');
   const [activeSection, setActiveSection] = useState('home');
   const [isScrolled, setIsScrolled] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleRegisterClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigate('/wordsmithsarenasecondedition');
+    setIsModalOpen(true);
+  };
 
   const [players, setPlayers] = useState<Player[]>([]);
 
@@ -357,8 +426,8 @@ const App: React.FC = () => {
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
-      if (view === 'landing') {
-        const sections = ['home', 'experience', 'rewards'];
+      if (view === 'home') {
+        const sections = ['hero', 'next-event', 'rewards'];
         for (const section of sections) {
           const element = document.getElementById(section);
           if (element) {
@@ -372,7 +441,7 @@ const App: React.FC = () => {
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [view]);
+  }, [location.pathname]);
 
   const handleRegister = async (data: Omit<Player, 'id' | 'status' | 'registeredAt'>) => {
     const { error } = await supabase
@@ -421,7 +490,21 @@ const App: React.FC = () => {
     <div className="min-h-screen bg-[#FFFDF5] text-[#5C2A11] linen-texture">
       <RegistrationModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => {
+          setIsModalOpen(false);
+          // Gently push back up the history stack when closing without explicit success
+          if (location.pathname === '/wordsmithsarenasecondedition') { navigate(-1); }
+        }}
+        onSuccess={() => {
+          setIsModalOpen(false);
+          setIsPaymentModalOpen(true);
+          // Redirect to a cleaner URL
+          navigate('/');
+        }}
+      />
+      <PaymentModal 
+        isOpen={isPaymentModalOpen}
+        onClose={() => setIsPaymentModalOpen(false)}
       />
       <AdminPanel
         isOpen={isAdminOpen}
@@ -430,308 +513,55 @@ const App: React.FC = () => {
         onUpdateStatus={updatePlayerStatus}
         onDeletePlayer={deletePlayer}
       />
+      <MenuOverlay 
+        isOpen={isMenuOpen} 
+        onClose={() => setIsMenuOpen(false)} 
+        onRegister={handleRegisterClick}
+      />
 
-      <nav className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-8 py-4 transition-all duration-700 ${isScrolled || view === 'players' ? 'bg-[#FFFDF5]/90 backdrop-blur-xl shadow-xl py-3' : 'bg-transparent py-6'}`}>
-        <div className="cursor-pointer group" onClick={() => { setView('landing'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
-          <img
-            src="https://i.ibb.co/Fbq9Msg4/unnamed-88-removebg-preview-removebg-preview.png"
-            alt="The Wordsmiths Arena Logo"
-            className="h-14 md:h-20 w-auto object-contain transition-transform duration-500 group-hover:scale-110 drop-shadow-md"
-          />
-        </div>
-
-        <div className="hidden md:flex items-center gap-10">
-          {view === 'landing' ? (
-            ['Experience', 'Rewards'].map((item) => (
-              <a key={item} href={`#${item.toLowerCase()}`} className="text-xs font-bold text-[#5C2A11]/80 hover:text-[#CC5500] transition-all uppercase tracking-widest relative group">
-                {item}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#CC5500] transition-all group-hover:w-full"></span>
-              </a>
-            ))
-          ) : (
-            <button onClick={() => setView('landing')} className="text-xs font-bold text-[#5C2A11]/80 hover:text-[#CC5500] transition-all uppercase tracking-widest relative group">
-              Back to Arena
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#CC5500] transition-all group-hover:w-full"></span>
-            </button>
-          )}
-          <button onClick={() => setView('registered-players')} className={`text-xs font-bold uppercase tracking-widest transition-all ${view === 'registered-players' ? 'text-[#CC5500]' : 'text-[#5C2A11]/80 hover:text-[#CC5500]'}`}>
-            Registered Players
+      <nav className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-6 md:px-12 py-3 md:py-4 transition-all duration-300 ${isScrolled || location.pathname !== '/' ? 'bg-white shadow-sm' : 'bg-transparent'}`}>
+        {/* Left Side Navigation */}
+        <div className="flex items-center gap-8 z-20 flex-1">
+          <button onClick={() => setIsMenuOpen(true)} className="p-2 hover:bg-black/5 rounded-full transition-colors flex items-center justify-center gap-3 group">
+            <Menu size={20} className={isScrolled || location.pathname !== '/' ? 'text-black' : 'text-white'} />
+            <span className={`text-sm font-medium ${isScrolled || location.pathname !== '/' ? 'text-black' : 'text-white'} group-hover:opacity-70 transition-opacity`}>Menu</span>
           </button>
         </div>
 
-        <div className="flex items-center gap-3">
-          <a
-            href="https://direktorpro.xyz/public/thewordsmithsarenajanuary26"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-[#CC5500] flex items-center gap-2 text-white text-[10px] md:text-xs font-bold px-4 md:px-6 py-2 md:py-2.5 rounded-lg hover:bg-[#B34B00] transition-colors"
+        {/* Center Logo */}
+        <div className="absolute left-1/2 -translate-x-1/2 z-20">
+          <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+            <img src="/wordsmithslogo.png" alt="Wordsmiths Arena Logo" className="h-10 sm:h-12 md:h-16 object-contain transition-all duration-300" />
+          </Link>
+        </div>
+
+        {/* Right Actions */}
+        <div className="flex items-center gap-2 sm:gap-4 z-20 flex-1 justify-end">
+          <button
+            onClick={handleRegisterClick}
+            className="hidden md:flex items-center gap-2 bg-noovo-yellow text-black font-semibold px-6 py-2.5 rounded-full hover:bg-[#E5A600] transition-colors text-sm"
           >
-            Tournament Link
-            <ExternalLink className="w-3 h-3 md:w-4 md:h-4" />
-          </a>
+            Register Now
+          </button>
+          <div className="flex bg-black/10 backdrop-blur-md rounded-full p-1 items-center border border-white/20 cursor-pointer hover:bg-black/20 transition-colors" onClick={() => navigate('/registered-players')}>
+             <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-white flex-shrink-0">
+               <img src="/IMG-20260228-WA0022.jpg" alt="User Avatar" className="w-full h-full object-cover" />
+             </div>
+             <span className={`hidden sm:inline px-4 text-sm font-medium ${isScrolled || location.pathname !== '/' ? 'text-black' : 'text-white'}`}>Build Your Profile</span>
+          </div>
         </div>
       </nav>
 
-      {view === 'landing' ? (
-        <>
-          <section id="home" className="relative h-screen min-h-[800px] flex flex-col items-center justify-center text-center px-4 overflow-hidden hero-gradient">
-            <div className="absolute bottom-0 left-0 w-full h-[60%] z-0 landscape-mask opacity-60 pointer-events-none">
-              <svg viewBox="0 0 1440 800" className="w-full h-full object-cover">
-                <path d="M0 600 L200 500 L500 650 L800 520 L1100 680 L1440 550 V800 H0 Z" fill="#CC5500" className="animate-float" />
-                <path d="M0 700 L300 650 L600 750 L1000 620 L1440 780 V800 H0 Z" fill="#994000" className="animate-float" style={{ animationDelay: '-2s' }} />
-                <path d="M0 750 Q400 700 800 750 T1440 750 V800 H0 Z" fill="#7A3300" className="animate-float" style={{ animationDelay: '-4s' }} />
-              </svg>
-            </div>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/gallery" element={<GalleryView />} />
+        <Route path="/tournaments" element={<TourneysView onRegister={handleRegisterClick} />} />
+        <Route path="/registered-players" element={<RegisteredPlayers />} />
+        <Route path="/register" element={<Home />} />
+        <Route path="/wordsmithsarenasecondedition" element={<Home />} />
+      </Routes>
 
-            <div className="fixed right-12 top-1/2 -translate-y-1/2 z-50 flex flex-col items-end gap-6 pointer-events-none hidden lg:flex">
-              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#CC5500] mb-4 block pointer-events-auto transition-all hover:tracking-[0.5em] cursor-default">The Journey</span>
-              <div className="flex flex-col gap-3 pointer-events-auto">
-                {['home', 'experience', 'rewards'].map(sec => (
-                  <a key={sec} href={`#${sec}`} className={`nav-dot ${activeSection === sec ? 'active' : ''}`}></a>
-                ))}
-              </div>
-            </div>
-
-            <div className="relative z-10 max-w-5xl mx-auto flex flex-col items-center">
-              <div className="relative mb-8">
-                <div className="absolute inset-0 bg-[#CC5500]/20 blur-[100px] rounded-full animate-pulse"></div>
-                <img
-                  src="https://i.ibb.co/Fbq9Msg4/unnamed-88-removebg-preview-removebg-preview.png"
-                  alt="The Wordsmiths Arena Logo"
-                  className="h-48 md:h-[450px] w-auto object-contain drop-shadow-2xl relative animate-reveal zoom-in"
-                />
-              </div>
-
-              <RevealOnScroll delay={200}>
-                <p className="text-[#5C2A11]/80 font-bold text-xs md:text-lg mb-4 uppercase tracking-[0.3em]">Feb 7, 2026 • 10 Rounds • CSW24</p>
-              </RevealOnScroll>
-
-              <RevealOnScroll delay={300}>
-                <h1 className="font-display text-6xl md:text-8xl lg:text-[9.5rem] leading-[0.8] text-[#5C2A11] uppercase tracking-tighter mb-10 drop-shadow-2xl">
-                  OPEN SCRABBLE<br />RETREAT
-                </h1>
-              </RevealOnScroll>
-
-              <RevealOnScroll delay={400}>
-                <div className="flex flex-col items-center gap-6 mb-12 w-full px-4">
-                  <a
-                    href="https://direktorpro.xyz/public/thewordsmithsarenajanuary26"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="bg-[#CC5500] text-white font-display text-2xl md:text-3xl lg:text-4xl px-10 md:px-12 lg:px-14 py-6 md:py-8 rounded-3xl shadow-2xl uppercase tracking-widest hover:bg-[#B34B00] transition-all hover:scale-105 text-center"
-                  >
-                    Tournament Link
-                  </a>
-                  <a
-                    href="https://direktorpro.xyz/public/thewordsmithsarenajanuary26/submit"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="bg-white text-[#CC5500] border-2 border-[#CC5500] font-display text-lg md:text-xl lg:text-2xl px-8 md:px-10 py-4 md:py-5 rounded-3xl shadow-xl uppercase tracking-widest hover:bg-[#F5E6D3] transition-all hover:scale-105 text-center"
-                  >
-                    Results Submission Link
-                  </a>
-                </div>
-              </RevealOnScroll>
-
-              <RevealOnScroll delay={500}>
-                <Countdown />
-              </RevealOnScroll>
-            </div>
-          </section>
-
-          <main className="pt-32 pb-40 relative z-10">
-            {/* SIMPLIFIED LOGISTICS SECTION */}
-            <section id="experience" className="max-w-7xl mx-auto px-8 mb-60">
-              <RevealOnScroll>
-                <div className="text-center mb-24">
-                  <h2 className="text-5xl md:text-6xl lg:text-7xl font-display text-[#5C2A11] uppercase tracking-tighter">EVENT DETAILS</h2>
-                </div>
-              </RevealOnScroll>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {TOURNAMENT_DETAILS.map((detail, idx) => (
-                  <RevealOnScroll key={idx} delay={idx * 100} direction="up" className="h-full">
-                    <div className="relative group h-full">
-                      {/* Wooden Frame */}
-                      <div className="absolute inset-0 bg-[#1A0D05] rounded-[2rem] transform translate-y-2 group-hover:translate-y-4 transition-transform shadow-2xl"></div>
-                      <div className="relative bg-[#1A0D05] p-3 rounded-[2rem] shadow-xl transform group-hover:-translate-y-1 transition-transform duration-300 h-full">
-
-                        {/* Wood Texture on Frame */}
-                        <div className="absolute inset-0 rounded-[2rem] opacity-30 bg-[url('https://www.transparenttextures.com/patterns/dark-wood.png')] pointer-events-none"></div>
-
-                        {/* Inner Parchment Area */}
-                        <div className="relative bg-[#F5E6D3] rounded-[1.5rem] p-6 h-full border border-[#5C2A11]/10 overflow-hidden group-hover:bg-[#FFF8F0] transition-colors flex flex-col justify-between">
-                          {/* Inner Shadow/Texture */}
-                          <div className="absolute inset-0 bg-[#5C2A11]/5 pointer-events-none mix-blend-multiply"></div>
-
-                          <div className="relative z-10">
-                            <div className="w-12 h-12 bg-[#5C2A11]/10 rounded-xl flex items-center justify-center text-[#5C2A11] mb-6 group-hover:scale-110 group-hover:bg-[#CC5500] group-hover:text-white transition-all duration-300">
-                              {detail.icon}
-                            </div>
-                            <div>
-                              <p className="text-[#5C2A11]/60 text-[10px] font-black uppercase tracking-widest mb-1">{detail.label}</p>
-                              <p className="text-2xl font-display text-[#5C2A11] uppercase">{detail.value}</p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </RevealOnScroll>
-                ))}
-                {/* Special Rating Highlight */}
-                <RevealOnScroll delay={TOURNAMENT_DETAILS.length * 100} direction="up" className="h-full">
-                  <div className="bg-[#5C2A11] rounded-[2rem] p-8 shadow-xl flex flex-col justify-center items-center text-center group relative overflow-hidden h-full">
-                    <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/dark-wood.png')] opacity-20"></div>
-                    <Shield className="w-12 h-12 text-[#CC5500] mb-4 group-hover:scale-110 transition-transform" />
-                    <h3 className="text-2xl font-display text-white uppercase mb-2">NSF Rated</h3>
-                    <p className="text-white/60 text-sm italic">Officially Sanctioned Point Earning Event</p>
-                  </div>
-                </RevealOnScroll>
-              </div>
-
-              {/* Quick Rule Footer */}
-              <div className="mt-16 bg-[#F5E6D3]/30 rounded-2xl p-6 flex flex-wrap justify-center gap-8 border border-[#CC5500]/10">
-                <div className="flex items-center gap-3">
-                  <Book size={18} className="text-[#CC5500]" />
-                  <span className="text-xs font-bold uppercase tracking-widest text-[#5C2A11]/60">CSW24 Dictionary Only</span>
-                </div>
-              </div>
-            </section>
-
-            {/* Registered Players Teaser */}
-            <section className="max-w-7xl mx-auto px-8 mb-60">
-              <RevealOnScroll>
-                <div className="mahogany-panel rounded-[4rem] p-12 md:p-20 lg:p-32 relative overflow-hidden shadow-2xl border-4 border-[#CC5500]/10 flex flex-col items-center text-center group">
-                  <div className="absolute top-0 right-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/wood-grain.png')] opacity-40"></div>
-                  <div className="relative z-10 max-w-3xl">
-                    <h2 className="text-5xl md:text-7xl lg:text-8xl font-display text-[#F5E6D3] uppercase mb-10 leading-tight tracking-tighter">THE RACK<br />IS FILLING.</h2>
-                    <p className="text-[#F5E6D3]/50 text-xl md:text-2xl lg:text-3xl mb-14 leading-relaxed font-light">Join the elite circle of wordsmiths. 22 contenders already registered.</p>
-                    <button
-                      onClick={() => setView('registered-players')}
-                      className="px-12 md:px-20 py-6 md:py-8 rounded-[2.5rem] bg-[#CC5500] text-white font-display text-2xl md:text-4xl uppercase hover:bg-[#F5E6D3] hover:text-[#5C2A11] transition-all shadow-2xl transform hover:scale-110"
-                    >
-                      View Registered Players
-                    </button>
-                  </div>
-                </div>
-              </RevealOnScroll>
-            </section>
-
-            {/* Redesigned Rewards Section */}
-            <section id="rewards" className="max-w-7xl mx-auto px-8 mb-60">
-              <RevealOnScroll>
-                <div className="text-center mb-32">
-                  <span className="text-[#CC5500] font-black uppercase tracking-[0.8em] text-[12px] mb-6 block">THE HALL OF CHAMPIONS</span>
-                  <h2 className="text-6xl md:text-7xl lg:text-[10rem] font-display text-[#5C2A11] uppercase tracking-tighter leading-[0.8]">PRIZE BOUNTY.</h2>
-                </div>
-              </RevealOnScroll>
-
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-10 items-end">
-                {/* 2nd Place Style: Intermediate */}
-                <div className="md:col-span-4 order-2 md:order-1">
-                  <RevealOnScroll delay={200}>
-                    <div className="bg-stone-200/50 p-12 md:p-6 lg:p-12 rounded-[3.5rem] border-t-8 border-stone-300 flex flex-col items-center text-center group hover:bg-white transition-all shadow-xl">
-                      <div className="w-24 h-24 rounded-full bg-stone-300 flex items-center justify-center text-stone-600 mb-8 shadow-inner transform group-hover:rotate-12 transition-transform">
-                        <Medal size={48} />
-                      </div>
-                      <h3 className="text-3xl font-display text-[#5C2A11] uppercase mb-2">{PRIZE_CATEGORIES[1].title}</h3>
-                      <div className="text-[#CC5500] font-black text-xs uppercase tracking-widest mb-6">{PRIZE_CATEGORIES[1].count} PLACES</div>
-                      <p className="text-[#5C2A11]/50 text-lg leading-relaxed">{PRIZE_CATEGORIES[1].description}</p>
-                    </div>
-                  </RevealOnScroll>
-                </div>
-
-                {/* 1st Place Style: Masters Tier */}
-                <div className="md:col-span-4 order-1 md:order-2">
-                  <RevealOnScroll>
-                    <div className="mahogany-panel p-14 md:p-8 lg:p-14 rounded-[4rem] border-t-8 border-[#BF953F] flex flex-col items-center text-center group relative shadow-2xl scale-105 z-20">
-                      <div className="absolute -top-10 inset-x-0 flex justify-center">
-                        <div className="bg-[#BF953F] px-8 py-2 rounded-full text-white font-black text-[10px] tracking-[0.4em] uppercase shadow-lg">PREMIER TIER</div>
-                      </div>
-                      <div className="w-32 h-32 rounded-full bg-gradient-to-br from-[#BF953F] to-[#AA771C] flex items-center justify-center text-white mb-10 shadow-2xl transform group-hover:scale-110 transition-transform">
-                        <Trophy size={64} />
-                      </div>
-                      <h3 className="text-4xl md:text-5xl font-display gold-shimmer uppercase mb-4 leading-none">{PRIZE_CATEGORIES[0].title}</h3>
-                      <div className="text-[#F5E6D3]/40 font-black text-sm uppercase tracking-widest mb-8">{PRIZE_CATEGORIES[0].count} ELITE SLOTS</div>
-                      <p className="text-[#F5E6D3]/60 text-xl leading-relaxed italic">{PRIZE_CATEGORIES[0].description}</p>
-                    </div>
-                  </RevealOnScroll>
-                </div>
-
-                {/* 3rd Place Style: Opens Tier */}
-                <div className="md:col-span-4 order-3 md:order-3">
-                  <RevealOnScroll delay={400}>
-                    <div className="bg-amber-100/30 p-12 md:p-6 lg:p-12 rounded-[3.5rem] border-t-8 border-amber-200 flex flex-col items-center text-center group hover:bg-white transition-all shadow-xl">
-                      <div className="w-24 h-24 rounded-full bg-amber-200 flex items-center justify-center text-amber-700 mb-8 shadow-inner transform group-hover:rotate-[-12deg] transition-transform">
-                        <Star size={48} />
-                      </div>
-                      <h3 className="text-3xl font-display text-[#5C2A11] uppercase mb-2">{PRIZE_CATEGORIES[2].title}</h3>
-                      <div className="text-[#CC5500] font-black text-xs uppercase tracking-widest mb-6">{PRIZE_CATEGORIES[2].count} PLACES</div>
-                      <p className="text-[#5C2A11]/50 text-lg leading-relaxed">{PRIZE_CATEGORIES[2].description}</p>
-                    </div>
-                  </RevealOnScroll>
-                </div>
-              </div>
-            </section>
-
-            {/* FINAL HIGH-IMPACT CTA */}
-            <section className="max-w-7xl mx-auto px-8 mb-40">
-              <div className="relative group overflow-hidden rounded-[4rem]">
-                {/* High contrast background */}
-                <div className="absolute inset-0 bg-[#CC5500] group-hover:bg-[#B34B00] transition-colors duration-700"></div>
-
-                {/* Diegetic Accents */}
-                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
-                <div className="absolute -top-24 -left-24 w-96 h-96 bg-white/5 rounded-full blur-3xl group-hover:scale-125 transition-transform duration-1000"></div>
-                <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-black/5 rounded-full blur-3xl group-hover:scale-125 transition-transform duration-1000"></div>
-
-                <RevealOnScroll>
-                  <div className="relative z-10 flex flex-col items-center text-center py-24 md:py-40 px-8">
-                    <div className="mb-12 flex items-center justify-center gap-6 md:gap-10">
-                      <ScrabbleTile letter="T" points={1} size="md" variant="light" className="rotate-[-10deg] shadow-2xl" />
-                      <ScrabbleTile letter="H" points={4} size="md" variant="light" className="rotate-[5deg] shadow-2xl" />
-                      <ScrabbleTile letter="E" points={1} size="md" variant="light" className="rotate-[-5deg] shadow-2xl" />
-                    </div>
-
-                    <h2 className="text-5xl md:text-7xl lg:text-[9rem] font-display text-white uppercase leading-[0.85] tracking-tighter mb-12">
-                      FINAL<br />MOVE IS YOURS.
-                    </h2>
-
-                    <p className="text-white/80 text-xl md:text-3xl max-w-2xl mb-16 leading-relaxed font-light">
-                      Don't stay on the sidelines. The tiles are set, the clocks are waiting, and the arena belongs to those who dare to play.
-                    </p>
-
-                    <div className="flex flex-col items-center gap-6 w-full px-4">
-                      <a
-                        href="https://direktorpro.xyz/public/thewordsmithsarenajanuary26"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="bg-white text-[#CC5500] font-display text-2xl md:text-3xl lg:text-3xl px-12 md:px-20 py-6 md:py-8 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] uppercase hover:scale-105 transition-transform text-center"
-                      >
-                        Tournament Link
-                      </a>
-                      <a
-                        href="https://direktorpro.xyz/public/thewordsmithsarenajanuary26/submit"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="bg-transparent border-2 border-white text-white font-display text-xl md:text-2xl lg:text-2xl px-10 md:px-16 py-4 md:py-6 rounded-[2.5rem] shadow-lg uppercase hover:bg-white/10 transition-all hover:scale-105 text-center"
-                      >
-                        Results Submission Link
-                      </a>
-                    </div>
-                  </div>
-                </RevealOnScroll>
-
-              </div>
-
-            </section>
-          </main>
-        </>
-      ) : (
-        <RegisteredPlayers onBack={() => setView('landing')} />
-      )}
-
-      <div className="fixed bottom-10 right-10 z-[60] flex flex-col gap-4 pointer-events-none">
+      <div className="fixed bottom-6 right-6 md:bottom-10 md:right-10 z-[60] flex flex-col gap-4 pointer-events-none">
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           className={`p-4 bg-white border border-[#CC5500]/20 rounded-full shadow-2xl text-[#CC5500] transition-all duration-500 pointer-events-auto hover:bg-[#CC5500] hover:text-white active:scale-90 ${isScrolled ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
@@ -750,6 +580,66 @@ const App: React.FC = () => {
           <Lock size={16} />
         </button>
       </div>
+
+      {/* Global Minimalist Footer */}
+      <footer className="w-full bg-white pt-20 pb-12 px-6 md:px-12 border-t border-black/5 relative z-50 mt-auto">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-12">
+          <div className="max-w-sm">
+             <div className="mb-8">
+               <img src="/wordsmithslogo.png" alt="Wordsmiths Arena Logo" className="h-20 md:h-24 object-contain" />
+             </div>
+             <div className="flex flex-col gap-4 text-black/60 font-light text-sm mb-12">
+               <p className="flex items-center gap-2">
+                 <span className="w-6 text-center">📞</span> +234 703 484 9762
+               </p>
+               <p className="flex items-center gap-2">
+                 <span className="w-6 text-center">✉️</span> info@thewordsmithsarena.com.ng
+               </p>
+               <p className="flex items-center gap-2">
+                 <span className="w-6 text-center">📍</span> Plot 3155a Eko Akete, New Rd,<br/>Amuwo-Odofin, Lagos
+               </p>
+             </div>
+             <p className="text-black/30 text-[10px] leading-relaxed">
+               The Wordsmiths Arena provides the information on this website for general purposes only. We make no guarantees or warranties, express or implied, regarding the accuracy, reliability, or availability of the information, products, services, or related graphics and renderings on this site for any purpose.
+             </p>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-16 text-sm">
+             <div className="flex flex-col gap-3">
+               <span className="text-black/40 mb-2">Events</span>
+               <Link to="/tournaments" className="text-black font-medium hover:text-black/60" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Tournaments</Link>
+               <Link to="/registered-players" className="text-black font-medium hover:text-black/60" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Player List</Link>
+               <Link to="/gallery" className="text-black font-medium hover:text-black/60" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Gallery</Link>
+             </div>
+             <div className="flex flex-col gap-3">
+               <span className="text-black/40 mb-2">Play</span>
+               <a href="https://woogles.io" target="_blank" rel="noopener noreferrer" className="text-black font-medium hover:text-black/60">Woogles</a>
+               <a href="https://isc.ro" target="_blank" rel="noopener noreferrer" className="text-black font-medium hover:text-black/60">Internet Scrabble Club</a>
+             </div>
+             <div className="flex flex-col gap-3">
+               <span className="text-black/40 mb-2">Study</span>
+               <a href="https://aerolith.org" target="_blank" rel="noopener noreferrer" className="text-black font-medium hover:text-black/60">Aerolith</a>
+               <a href="https://xerafin.net" target="_blank" rel="noopener noreferrer" className="text-black font-medium hover:text-black/60">Xerafin</a>
+               <a href="https://wordsmithapp.netlify.app" target="_blank" rel="noopener noreferrer" className="text-black font-medium hover:text-black/60">Wordsmith (App)</a>
+             </div>
+             <div className="flex flex-col gap-3">
+               <span className="text-black/40 mb-2">The Arena</span>
+               <a href="#" className="text-black font-medium hover:text-black/60">Mission</a>
+               <a href="#" className="text-black font-medium hover:text-black/60">Director</a>
+               <a href="#" className="text-black font-medium hover:text-black/60">FAQ</a>
+               <a href="#" className="text-black font-medium hover:text-black/60">Contact Us</a>
+             </div>
+          </div>
+        </div>
+        
+        <div className="max-w-7xl mx-auto mt-20 pt-8 border-t border-black/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-medium text-black/60">
+          <div className="flex gap-6">
+            <a href="#" className="hover:text-black">Terms of Event</a>
+            <a href="#" className="hover:text-black">Privacy Policy</a>
+          </div>
+          <p>© 2026 Wordsmiths Arena. All Rights Reserved.</p>
+        </div>
+      </footer>
     </div >
   );
 };

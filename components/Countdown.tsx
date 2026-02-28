@@ -35,10 +35,10 @@ const Countdown: React.FC = () => {
 
   const TimeUnit = ({ value, label }: { value: number; label: string }) => (
     <div className="flex flex-col items-center">
-      <div className="text-4xl md:text-6xl font-display text-[#5C2A11] tracking-tighter tabular-nums">
+      <div className="text-4xl md:text-6xl font-medium text-black tracking-tight tabular-nums">
         {value.toString().padStart(2, '0')}
       </div>
-      <span className="text-[10px] uppercase tracking-widest text-[#5C2A11]/50 font-bold">{label}</span>
+      <span className="text-xs font-semibold text-black/50 mt-1 uppercase tracking-widest">{label}</span>
     </div>
   );
 
@@ -48,9 +48,9 @@ const Countdown: React.FC = () => {
   if (eventHasPassed) {
     return (
       <div className="text-center py-6">
-        <div className="inline-flex items-center gap-3 bg-[#CC5500]/10 px-6 py-3 rounded-full border border-[#CC5500]/20">
-          <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-          <span className="font-display text-xl text-[#5C2A11] uppercase tracking-wider">Event In Progress</span>
+        <div className="inline-flex items-center gap-3 bg-black/5 px-6 py-3 rounded-full border border-black/10">
+          <div className="w-3 h-3 bg-noovo-yellow rounded-full animate-pulse"></div>
+          <span className="font-medium text-sm text-black tracking-wide uppercase">Event In Progress</span>
         </div>
       </div>
     );
@@ -59,11 +59,11 @@ const Countdown: React.FC = () => {
   return (
     <div className="flex justify-center items-center gap-4 md:gap-12 py-6">
       <TimeUnit value={timeLeft.days} label="Days" />
-      <div className="text-2xl text-[#5C2A11]/20 mt-[-1rem]">:</div>
+      <div className="text-2xl text-black/20 mt-[-1rem]">:</div>
       <TimeUnit value={timeLeft.hours} label="Hours" />
-      <div className="text-2xl text-[#5C2A11]/20 mt-[-1rem]">:</div>
+      <div className="text-2xl text-black/20 mt-[-1rem]">:</div>
       <TimeUnit value={timeLeft.minutes} label="Mins" />
-      <div className="text-2xl text-[#5C2A11]/20 mt-[-1rem]">:</div>
+      <div className="text-2xl text-black/20 mt-[-1rem]">:</div>
       <TimeUnit value={timeLeft.seconds} label="Secs" />
     </div>
   );

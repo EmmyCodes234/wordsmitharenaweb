@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Search, ArrowLeft, Users, Trophy, Target } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { RegisteredPlayer } from '../types';
 
 const REGISTERED_PLAYERS: RegisteredPlayer[] = [
@@ -29,7 +30,7 @@ const REGISTERED_PLAYERS: RegisteredPlayer[] = [
   { id: 24, name: "Idomele Emeka", category: "Opens", seed: 24 }
 ];
 
-const RegisteredPlayers: React.FC<{ onBack: () => void }> = ({ onBack }) => {
+const RegisteredPlayers: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredPlayers = REGISTERED_PLAYERS.filter(player =>
@@ -47,53 +48,53 @@ const RegisteredPlayers: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FFFDF5] pt-24 pb-40 px-4 md:px-8 animate-reveal overflow-x-hidden">
+    <div className="min-h-screen bg-white pt-24 pb-40 px-6 md:px-12 animate-reveal overflow-x-hidden">
       <div className="max-w-6xl mx-auto">
-        <button
-          onClick={onBack}
-          className="flex items-center gap-2 text-[#CC5500] font-bold uppercase tracking-widest text-xs mb-8 hover:translate-x-[-4px] transition-transform"
+        <Link
+          to="/"
+          className="flex items-center gap-2 text-black font-medium text-sm mb-8 sm:mb-12 hover:-translate-x-1 transition-transform"
         >
           <ArrowLeft size={16} /> Back to Arena
-        </button>
+        </Link>
 
-        <div className="flex flex-col gap-8 mb-12">
-          <div className="text-center">
-            <h1 className="font-display text-5xl md:text-7xl text-[#5C2A11] uppercase leading-none mb-4">
+        <div className="flex flex-col gap-8 mb-16">
+          <div>
+            <h1 className="text-4xl sm:text-5xl md:text-7xl text-black font-medium tracking-tight mb-2">
               Registered Players
             </h1>
-            <p className="text-[#CC5500] font-black uppercase tracking-[0.4em] text-[10px]">
+            <p className="text-black/50 text-base font-light">
               Official Entry List • Feb 2026
             </p>
           </div>
 
           {/* Stats Overview */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="bg-[#F5E6D3]/50 rounded-2xl p-6 text-center border border-[#CC5500]/10">
-              <Users className="w-8 h-8 text-[#CC5500] mx-auto mb-3" />
-              <div className="font-display text-3xl text-[#5C2A11]">{REGISTERED_PLAYERS.length}</div>
-              <div className="text-[10px] font-black uppercase tracking-widest text-[#5C2A11]/60">Total Players</div>
+            <div className="bg-white rounded-[2rem] p-8 text-center border border-black/5 flex flex-col items-center">
+              <Users className="w-8 h-8 text-black/40 mb-4" />
+              <div className="text-4xl text-black font-medium">{REGISTERED_PLAYERS.length}</div>
+              <div className="text-black/40 text-sm font-medium mt-1">Total Players</div>
             </div>
-            <div className="bg-[#F5E6D3]/50 rounded-2xl p-6 text-center border border-[#CC5500]/10">
-              <Trophy className="w-8 h-8 text-[#CC5500] mx-auto mb-3" />
-              <div className="font-display text-3xl text-[#5C2A11]">24</div>
-              <div className="text-[10px] font-black uppercase tracking-widest text-[#5C2A11]/60">Capacity</div>
+            <div className="bg-white rounded-[2rem] p-8 text-center border border-black/5 flex flex-col items-center">
+              <Trophy className="w-8 h-8 text-black/40 mb-4" />
+              <div className="text-4xl text-black font-medium">24</div>
+              <div className="text-black/40 text-sm font-medium mt-1">Capacity</div>
             </div>
-            <div className="bg-[#F5E6D3]/50 rounded-2xl p-6 text-center border border-[#CC5500]/10">
-              <Target className="w-8 h-8 text-[#CC5500] mx-auto mb-3" />
-              <div className="font-display text-3xl text-[#5C2A11]">
+            <div className="bg-white rounded-[2rem] p-8 text-center border border-black/5 flex flex-col items-center">
+              <Target className="w-8 h-8 text-black/40 mb-4" />
+              <div className="text-4xl text-black font-medium">
                 {Math.round((REGISTERED_PLAYERS.length / 24) * 100)}%
               </div>
-              <div className="text-[10px] font-black uppercase tracking-widest text-[#5C2A11]/60">Occupancy</div>
+              <div className="text-black/40 text-sm font-medium mt-1">Occupancy</div>
             </div>
           </div>
 
           {/* Search */}
-          <div className="relative w-full max-w-2xl mx-auto group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#5C2A11]/30 group-focus-within:text-[#CC5500] transition-colors" size={18} />
+          <div className="relative w-full max-w-2xl group">
+            <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-black/30 group-focus-within:text-black transition-colors" size={20} />
             <input
               type="text"
               placeholder="Search players..."
-              className="w-full bg-white border-2 border-[#5C2A11]/5 rounded-2xl px-12 py-3.5 outline-none focus:border-[#CC5500] transition-all font-semibold text-sm"
+              className="w-full bg-white border border-black/10 rounded-full px-14 py-4 outline-none focus:border-black transition-all text-base text-black placeholder:text-black/40"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -101,31 +102,28 @@ const RegisteredPlayers: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         </div>
 
         {/* Players Grid */}
-        <div className="bg-[#F5E6D3]/30 rounded-[2rem] border border-[#CC5500]/10 overflow-hidden shadow-sm">
-          <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-[#CC5500]/5">
+        <div className="bg-white rounded-[2rem] border border-black/5 overflow-hidden shadow-sm">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-0 gap-y-0 divide-y md:divide-y-[1px] md:divide-x lg:divide-x lg:divide-y-[1px] divide-black/5 border-b-0">
             {filteredPlayers.map((player, index) => (
               <div
                 key={player.id}
-                className="p-6 flex items-center gap-4 hover:bg-white transition-all group animate-reveal"
+                className="p-6 flex items-center justify-between hover:bg-black/[0.02] transition-colors group animate-reveal border-b md:border-b-0 lg:border-b border-black/5"
                 style={{ animationDelay: `${index * 30}ms` }}
               >
-                <div className="flex-shrink-0 w-14 h-14 bg-[#CC5500]/10 rounded-xl flex items-center justify-center font-display text-xl text-[#CC5500] border border-[#CC5500]/10 group-hover:bg-[#CC5500] group-hover:text-white transition-all transform group-hover:rotate-6">
-                  {player.seed}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <h3 className="font-bold text-[#5C2A11] text-base leading-tight truncate">
-                    {player.name}
-                  </h3>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="px-2 py-1 bg-[#5C2A11]/5 text-[#5C2A11] text-[9px] font-black uppercase rounded-full">
-                      {player.category}
-                    </span>
-                    {player.seed && (
-                      <span className="text-[9px] font-bold text-[#CC5500] uppercase">
-                        #{player.seed} Seed
-                      </span>
-                    )}
-                  </div>
+                <div className="flex items-center gap-4">
+                    <div className="flex-shrink-0 w-12 h-12 bg-black/5 rounded-full flex items-center justify-center text-xl text-black font-medium group-hover:bg-[#111111] group-hover:text-noovo-yellow transition-colors">
+                      {player.seed}
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className="text-black font-medium text-lg truncate">
+                        {player.name}
+                      </h3>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span className="text-black/50 text-sm">
+                          {player.category}
+                        </span>
+                      </div>
+                    </div>
                 </div>
               </div>
             ))}
@@ -134,18 +132,18 @@ const RegisteredPlayers: React.FC<{ onBack: () => void }> = ({ onBack }) => {
 
         {filteredPlayers.length === 0 && searchTerm && (
           <div className="text-center py-12">
-            <p className="text-[#5C2A11]/60">No players found matching "{searchTerm}"</p>
+            <p className="text-black/50">No players found matching "{searchTerm}"</p>
           </div>
         )}
 
         {/* Category Distribution */}
-        <div className="mt-12 bg-white rounded-2xl p-6 border border-[#CC5500]/10">
-          <h3 className="font-display text-2xl text-[#5C2A11] mb-6 text-center">Category Distribution</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
+        <div className="mt-16 bg-white rounded-[2rem] p-8 md:p-12 border border-black/5">
+          <h3 className="text-3xl font-medium text-black mb-10 text-center">Category Distribution</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {getCategoryStats().map(({ category, count }) => (
-              <div key={category} className="flex items-center justify-between p-4 bg-[#F5E6D3]/30 rounded-xl">
-                <span className="font-bold text-[#5C2A11]">{category}</span>
-                <span className="font-display text-xl text-[#CC5500]">{count}</span>
+              <div key={category} className="flex flex-col items-center justify-center p-8 bg-black/[0.02] rounded-2xl">
+                <span className="text-4xl text-black font-medium mb-2">{count}</span>
+                <span className="text-black/50 font-medium">{category}</span>
               </div>
             ))}
           </div>

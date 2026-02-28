@@ -24,24 +24,21 @@ const ScrabbleTile: React.FC<ScrabbleTileProps> = ({
   };
 
   const colors = {
-    light: 'bg-white text-[#5C2A11] border-b-4 border-stone-200',
-    dark: 'bg-[#5C2A11] text-white border-b-4 border-black',
-    orange: 'bg-[#CC5500] text-white border-b-4 border-[#994000]'
+    light: 'bg-white text-black border-b border-black/10 shadow-sm',
+    dark: 'bg-[#111111] text-noovo-yellow border-b border-black',
+    orange: 'bg-noovo-yellow text-black border-b border-[#E5A600]'
   };
 
   return (
     <div className={`
       ${sizeClasses[size]} 
       ${colors[variant]}
-      rounded-lg 
-      flex items-center justify-center 
-      relative 
-      select-none 
-      font-display
+      rounded-lg flex flex-col items-center justify-center 
+      relative select-none font-medium
       ${className}
     `}>
       <span className="uppercase">{letter}</span>
-      <span className="absolute bottom-1 right-1 text-[10px] font-bold opacity-60">
+      <span className="absolute bottom-1 right-1 text-[9px] font-semibold opacity-50">
         {points}
       </span>
     </div>
