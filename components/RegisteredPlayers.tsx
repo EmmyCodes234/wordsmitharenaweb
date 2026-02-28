@@ -4,30 +4,9 @@ import { Link } from 'react-router-dom';
 import { RegisteredPlayer } from '../types';
 
 const REGISTERED_PLAYERS: RegisteredPlayer[] = [
-  { id: 1, name: "Monday Christopher", category: "Intermediate", seed: 1 },
-  { id: 2, name: "Ben Humbe", category: "Intermediate", seed: 2 },
-  { id: 3, name: "John Aiyedun", category: "Masters", seed: 3 },
-  { id: 4, name: "Sophia Ekeruche", category: "Intermediate", seed: 4 },
-  { id: 5, name: "Charles Uzamere", category: "Intermediate", seed: 5 },
-  { id: 6, name: "Julius Adeyemi", category: "Intermediate", seed: 6 },
-  { id: 7, name: "Segun Durojaiye", category: "Masters", seed: 7 },
-  { id: 8, name: "Adowei Ebikeme", category: "Intermediate", seed: 8 },
-  { id: 9, name: "Olumide Oyejide", category: "Masters", seed: 9 },
-  { id: 10, name: "David Ojih", category: "Masters", seed: 10 },
-  { id: 11, name: "Hassan Wasiu", category: "Masters", seed: 11 },
-  { id: 12, name: "Ewruje James", category: "Masters", seed: 12 },
-  { id: 13, name: "Bukunmi Afolayan", category: "Intermediate", seed: 13 },
-  { id: 14, name: "Kareem Jamiu", category: "Intermediate", seed: 14 },
-  { id: 15, name: "Ezinna Lovejoy", category: "Opens", seed: 15 },
-  { id: 16, name: "Benjamin Akpotu", category: "Intermediate", seed: 16 },
-  { id: 17, name: "Anthony Odok", category: "Masters", seed: 17 },
-  { id: 18, name: "Olaribigbe Hakeem", category: "Masters", seed: 18 },
-  { id: 19, name: "Tunde Saporu", category: "Masters", seed: 19 },
-  { id: 20, name: "Ibukun Agbelekale", category: "Opens", seed: 20 },
-  { id: 21, name: "Effiong Bassey", category: "Intermediate", seed: 21 },
-  { id: 22, name: "Sunday Ituah", category: "Intermediate", seed: 22 },
-  { id: 23, name: "Emmanuel Egbele", category: "Intermediate", seed: 23 },
-  { id: 24, name: "Idomele Emeka", category: "Opens", seed: 24 }
+  { id: 1, name: "Segun Durojaiye", category: "Masters", seed: 1 },
+  { id: 2, name: "Benjamin Humbe", category: "Intermediate", seed: 2 },
+  { id: 3, name: "Afolayan Bukunmi", category: "Intermediate", seed: 3 },
 ];
 
 const RegisteredPlayers: React.FC = () => {
