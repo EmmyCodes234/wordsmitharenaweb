@@ -379,7 +379,7 @@ const App: React.FC = () => {
 
   const handleRegisterClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    navigate('/wordsmithsarenasecondedition');
+    navigate('/register');
     setIsModalOpen(true);
   };
 
@@ -493,7 +493,7 @@ const App: React.FC = () => {
         onClose={() => {
           setIsModalOpen(false);
           // Gently push back up the history stack when closing without explicit success
-          if (location.pathname === '/wordsmithsarenasecondedition') { navigate(-1); }
+          if (location.pathname === '/register') { navigate(-1); }
         }}
         onSuccess={() => {
           setIsModalOpen(false);
@@ -558,7 +558,7 @@ const App: React.FC = () => {
         <Route path="/tournaments" element={<TourneysView onRegister={handleRegisterClick} />} />
         <Route path="/registered-players" element={<RegisteredPlayers />} />
         <Route path="/register" element={<Home />} />
-        <Route path="/wordsmithsarenasecondedition" element={<Home />} />
+
       </Routes>
 
       <div className="fixed bottom-6 right-6 md:bottom-10 md:right-10 z-[60] flex flex-col gap-4 pointer-events-none">

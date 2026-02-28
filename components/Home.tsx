@@ -134,7 +134,7 @@ export const Home: React.FC = () => {
               }} className="bg-white text-black font-semibold text-sm md:text-base px-10 py-4 rounded-full hover:bg-gray-100 transition-colors w-full md:w-auto text-center tracking-wide">
                 Discover the Arena
               </button>
-              <Link to="/wordsmithsarenasecondedition" className="flex items-center justify-center gap-3 bg-[#111111] text-white font-medium text-sm md:text-base px-10 py-4 rounded-full hover:bg-black transition-all w-full md:w-auto text-center tracking-wide group">
+              <Link to="/register" className="flex items-center justify-center gap-3 bg-[#111111] text-white font-medium text-sm md:text-base px-10 py-4 rounded-full hover:bg-black transition-all w-full md:w-auto text-center tracking-wide group">
                 <Zap size={16} className="text-white group-hover:text-noovo-yellow transition-colors" />
                 Register Now
               </Link>
